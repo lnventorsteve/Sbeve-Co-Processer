@@ -5,12 +5,15 @@ import CPU_Components as cc
 import os
 import compiler
 
+try :
+    with open("config","r") as config:
+        path = config.readline()[:-1]
+        blueprint_name = config.readline()
+except(FileNotFoundError):
+    print("config file not found")
+    exit(1)
+
 ID = sm.ID()  # init ID class
-if os.name == "posix":
-    path = (r"/home/dyaln/.local/share/Steam/steamapps/compatdata/387990/pfx/dosdevices/c:/users/steamuser/"
-            r"AppData/Roaming/Axolot Games/Scrap Mechanic/User/User_76561198331351809/Blueprints/")
-if os.name == "nt":
-    path = r"C:\Users\Dylan\AppData\Roaming\Axolot Games\Scrap Mechanic\User\User_76561198331351809\Blueprints/"
 
 
 blueprint = sm.Blueprint(ID, path, r"0d1ecb3e-a836-40c0-a35b-bfd22f6812ae")  # init Blueprint class

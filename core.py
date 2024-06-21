@@ -7,14 +7,12 @@ import compiler
 
 ID = sm.ID()  # init ID class
 
-if os.name == "posix":
-    path = (r"/home/dyaln/snap/steam/common/.local/share/Steam/steamapps/compatdata/387990/pfx/drive_c/users/"
-            r"steamuser/AppData/Roaming/Axolot Games/Scrap Mechanic/User/User_76561198331351809/Blueprints/")
-elif os.name == "nt":
-    path = r"C:\Users\Dylan\AppData\Roaming\Axolot Games\Scrap Mechanic\User\User_76561198331351809\Blueprints/"
-else:
-    print("unknown os")
-    exit(1)
+try :
+    with open("config","r") as config:
+        path = config.readline()[:-1]
+        blueprint_name = config.readline()
+except(FileNotFoundError):
+    print("config file not found")
 
 blueprint = sm.Blueprint(ID, path, r"e37c1c7a-119b-44d8-a44b-8b511519fb46")  # init Blueprint class
 
