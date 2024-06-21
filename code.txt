@@ -1,0 +1,24 @@
+nop
+xor a,a
+xor b,b
+xor c,c
+xor d,d
+mov th,#
+1
+mov tl,a
+mov sp,tx
+mov th,#
+2
+mov si,tx
+mov th,a
+mov tl,#
+15
+
+IO a,Si
+nop
+test a
+jz tx
+nop
+push a
+nop
+jmp tx
