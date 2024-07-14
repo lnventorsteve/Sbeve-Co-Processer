@@ -65,7 +65,7 @@ class colors:
         self.Dark_Red = "7c0000"
         self.Dried_Blood = "560202"
 
-        self.white = "eeaf5c"
-        self.white = "df7f00"
-        self.white = "673b00"
-        self.white = "472800"
+        self.white : "eeaf5c"
+        self.white : "df7f00"
+        self.white : "673b00"
+        self.white : "472800"

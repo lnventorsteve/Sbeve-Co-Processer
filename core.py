@@ -39,10 +39,10 @@ Transfer_bus = cc.Bus(blueprint,ID,16,(0,36,0),"eeeeee")     # 16-bit transfer b
 ALU_LHS_bus = cc.Bus(blueprint,ID,8,(26,41,0),"2ce6e6")     # 8-bit ALU input bus right hand side shift
 ALU_RHS_bus = cc.Bus(blueprint,ID,8,(26,42,0),"cf11d2")     # 8-bit ALU input bus left hand side bitwise
 
-GPR_A = cc.GPR8Bit(blueprint,ID,(17,37,0))              # 8-bit general purpose register A
-GPR_B = cc.GPR8Bit(blueprint,ID,(17,31,0))              # 8-bit general purpose register B
-GPR_C = cc.GPR8Bit(blueprint,ID,(17,25,0))              # 8-bit general purpose register C
-GPR_D = cc.GPR8Bit(blueprint,ID,(17,19,0))              # 8-bit general purpose register D
+GPR_A = cc.GPR(blueprint,ID,8,(17,37,0))              # 8-bit general purpose register A
+GPR_B = cc.GPR(blueprint,ID,8,(17,31,0))              # 8-bit general purpose register B
+GPR_C = cc.GPR(blueprint,ID,8,(17,25,0))              # 8-bit general purpose register C
+GPR_D = cc.GPR(blueprint,ID,8,(17,19,0))              # 8-bit general purpose register D
 
 constant = cc.Register(blueprint,ID,8,(17,15,0))           # 8-bit register for loading values from program memory
 
@@ -50,11 +50,11 @@ Transfer_RHS = cc.Transfer8Bit(blueprint,ID,(17,1,0))   # 8-bit Transfer registe
 Transfer_LHS = cc.Transfer8Bit(blueprint,ID,(17,8,0))   # 8-bit Transfer register left hand side
 
 
-pc = cc.Address16Bit(blueprint,ID,(0,29,0))               # 16-bit program counter
-ra = cc.Address16Bit(blueprint,ID,(0,22,0))               # 16-bit return address
-sp = cc.Address16Bit(blueprint,ID,(0,15,0))               # 16-bit stack pointer
-di = cc.Address16Bit(blueprint,ID,(0,8,0))               # 16-bit destination index
-si = cc.Address16Bit(blueprint,ID,(0,1,0))                # 16-bit source index
+pc = cc.AddressRegister(blueprint,ID,16,(0,29,0))               # 16-bit program counter
+ra = cc.AddressRegister(blueprint,ID,16,(0,22,0))               # 16-bit return address
+sp = cc.AddressRegister(blueprint,ID,16,(0,15,0))               # 16-bit stack pointer
+di = cc.AddressRegister(blueprint,ID,16,(0,8,0))               # 16-bit destination index
+si = cc.AddressRegister(blueprint,ID,16,(0,1,0))                # 16-bit source index
 
 
 bitwise = cc.Bitwise(blueprint,ID,8,(26,34,0))

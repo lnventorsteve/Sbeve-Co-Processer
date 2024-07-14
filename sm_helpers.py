@@ -1,4 +1,14 @@
 import json
+import os
+
+from PIL import Image
+
+import block_list
+import color_list
+
+blocks = block_list.blocks()  # list of usable blocks
+objects = block_list.objects()  # list of usable objects
+colors = color_list.colors()  # list of Scrap Mechanic Colors
 
 
 def hex_rgb(color):
@@ -40,6 +50,190 @@ def rgb_hex(color):
     if len(hex_blue) == 1:
         hex_blue = "0" + hex_blue
     return hex_red + hex_green + hex_blue
+
+def fill_void(object,x,y,z,block, color = "000000" ,offSet = None):
+    def show_fill_block():
+        def logic_gate(image,pos,size, color):
+            for x in range(16):
+                for y in range(16):
+                    if x <= 1 or y <= 1 or x >= 14 or y >= 14 :
+                        image.putpixel((pos[0]+x, pos[1]+y), color)
+                    if 1 < y < 14 and 1 < x < 14 :
+                        image.putpixel((pos[0]+x, pos[1]+y), (128,128,128))
+
+            image.putpixel((pos[0]+4, pos[1]+4), (32, 32, 32))
+            image.putpixel((pos[0]+4, pos[1]+5), (32, 32, 32))
+            image.putpixel((pos[0]+4, pos[1]+6), (32, 32, 32))
+            image.putpixel((pos[0]+4, pos[1]+7), (32, 32, 32))
+            image.putpixel((pos[0]+4, pos[1]+8), (32, 32, 32))
+            image.putpixel((pos[0]+4, pos[1]+9), (32, 32, 32))
+            image.putpixel((pos[0]+4, pos[1]+10), (32, 32, 32))
+            image.putpixel((pos[0]+4, pos[1]+11), (32, 32, 32))
+            image.putpixel((pos[0]+5, pos[1]+4), (32, 32, 32))
+            image.putpixel((pos[0]+5, pos[1]+5), (32, 32, 32))
+            image.putpixel((pos[0]+5, pos[1]+6), (32, 32, 32))
+            image.putpixel((pos[0]+5, pos[1]+7), (32, 32, 32))
+            image.putpixel((pos[0]+5, pos[1]+8), (32, 32, 32))
+            image.putpixel((pos[0]+5, pos[1]+9), (32, 32, 32))
+            image.putpixel((pos[0]+5, pos[1]+10), (32, 32, 32))
+            image.putpixel((pos[0]+5, pos[1]+11), (32, 32, 32))
+
+            image.putpixel((pos[0]+6, pos[1]+10), (32, 32, 32))
+            image.putpixel((pos[0]+6, pos[1]+11), (32, 32, 32))
+            image.putpixel((pos[0]+7, pos[1]+10), (32, 32, 32))
+            image.putpixel((pos[0]+7, pos[1]+11), (32, 32, 32))
+            image.putpixel((pos[0]+8, pos[1]+10), (32, 32, 32))
+            image.putpixel((pos[0]+8, pos[1]+11), (32, 32, 32))
+            image.putpixel((pos[0]+9, pos[1]+9), (32, 32, 32))
+            image.putpixel((pos[0]+9, pos[1]+10), (32, 32, 32))
+            image.putpixel((pos[0]+9, pos[1]+11), (32, 32, 32))
+            image.putpixel((pos[0]+10, pos[1]+10), (32, 32, 32))
+
+            image.putpixel((pos[0]+6, pos[1]+4), (32, 32, 32))
+            image.putpixel((pos[0]+6, pos[1]+5), (32, 32, 32))
+            image.putpixel((pos[0]+7, pos[1]+4), (32, 32, 32))
+            image.putpixel((pos[0]+7, pos[1]+5), (32, 32, 32))
+            image.putpixel((pos[0]+8, pos[1]+4), (32, 32, 32))
+            image.putpixel((pos[0]+8, pos[1]+5), (32, 32, 32))
+            image.putpixel((pos[0]+9, pos[1]+4), (32, 32, 32))
+            image.putpixel((pos[0]+9, pos[1]+5), (32, 32, 32))
+            image.putpixel((pos[0]+9, pos[1]+6), (32, 32, 32))
+            image.putpixel((pos[0]+10, pos[1]+5), (32, 32, 32))
+
+            image.putpixel((pos[0]+10, pos[1]+6), (32, 32, 32))
+            image.putpixel((pos[0]+10, pos[1]+7), (32, 32, 32))
+            image.putpixel((pos[0]+10, pos[1]+8), (32, 32, 32))
+            image.putpixel((pos[0]+10, pos[1]+9), (32, 32, 32))
+            image.putpixel((pos[0]+11, pos[1]+6), (32, 32, 32))
+            image.putpixel((pos[0]+11, pos[1]+7), (32, 32, 32))
+            image.putpixel((pos[0]+11, pos[1]+8), (32, 32, 32))
+            image.putpixel((pos[0]+11, pos[1]+9), (32, 32, 32))
+
+        def Noblock(image,pos,size):
+            for x in range(size[0]):
+                for y in range(size[1]):
+                    if x == y or x+1 == y or x == size[1]-y or x+1 == size[1]-y or x == 0 or y == 0 or x == size[0]-1 or y == size[1]-1 :
+                        image.putpixel((pos[0]+x, pos[1]+y), (255,0,0))
+                    else:
+                        image.putpixel((pos[0] + x, pos[1] + y), (0, 0, 0))
+
+        size = 16
+        new_image = Image.new("RGB", (int(len(filled_blocks)*size), int(len(filled_blocks[0])*size)), color=0)
+        for z in range(len(filled_blocks[0][0])):
+            for x in range(len(filled_blocks)):
+                for y in range(len(filled_blocks[x])):
+                    if filled_blocks[x][y][z] is not None:
+                        logic_gate(new_image,(x*size,-y*size),(size,size),hex_rgb(filled_blocks[x][y][z].color))
+
+                    else:
+                        Noblock(new_image,(x*size,-y*size),(size,size))
+            new_image.show()
+
+
+    def fill_block(member):
+        if hasattr(member, "timer_pos"):
+            posx, posy, posz = member.timer_pos
+            posx -= offx
+            posy -= offy
+            posz -= offz
+            filled_blocks[posx][posy][posz] = member
+
+        posx, posy, posz = member.pos
+        posx -= offx
+        posy -= offy
+        posz -= offz
+        filled_blocks[posx][posy][posz] = member
+
+    def fill():
+        isblock = False
+        blocks_members = [attr for attr in dir(blocks) if not callable(getattr(blocks, attr)) and not attr.startswith("__")]
+        for each in blocks_members:
+            if block["uuid"] == blocks.__getattribute__(each)["uuid"]:
+                isblock = True
+                break
+
+
+        for x in range(len(filled_blocks)):
+            for y in range(len(filled_blocks[x])):
+                if filled_blocks[x][y][0] is None:
+                    if isblock:
+                        object.fill_block(block, (x+offx,y+offy-1,offz), (1,1,1), color)
+                    else:
+                        object.place_object(block,(x+offx,y+offy-1,offz),"up","up", color)
+
+    filled_blocks = [[[None for _ in range(z)] for _ in range(y)] for _ in range(x)]
+
+    if offSet is not None:
+        offx, offy, offz = offSet
+    elif hasattr(object, "pos"):
+        offx,offy,offz = object.pos
+    else:
+        offx, offy, offz = 0,0,0
+
+    members = [attr for attr in dir(object) if not callable(getattr(object, attr)) and not attr.startswith("__")]
+
+    for each in members:
+        member = object.__getattribute__(each)
+        if type(member) == type([]):
+            for each in member:
+                if hasattr(each, "pos"):
+                    fill_block(each)
+
+        elif hasattr(member,"pos"):
+            fill_block(member)
+
+    #show_fill_block()
+    fill()
+
+def border(blueprint,posx,posy,offx,offy):
+    offx-=1
+    offy-=1
+    posx+=1
+
+    for y in range(posy):
+        blueprint.place_object(objects.Small_Pipe_Tee,(offx,y + offy,0),"up","up","000000")
+        blueprint.place_object(objects.Duct_End,(offx,y + offy,0),"south","right","000000")
+        blueprint.place_object(objects.Duct_End,(offx,y + offy,0),"north","left","000000")
+        blueprint.place_object(objects.Duct_End,(offx,y + offy,0),"south","left","000000")
+
+        blueprint.place_object(objects.Small_Pipe_Tee,(offx+posx,y + offy,0),"up","down","000000")
+        blueprint.place_object(objects.Duct_End,(offx+posx,y + offy,0),"west","down","000000")
+        blueprint.place_object(objects.Duct_End,(offx+posx,y + offy,0),"south","right","000000")
+        blueprint.place_object(objects.Duct_End,(offx+posx,y + offy,0),"south","left","000000")
+
+    for x in range(posx-1):
+        blueprint.place_object(objects.Small_Pipe_Tee,(1+x+offx,offy-1,0),"up","left","000000")
+        blueprint.place_object(objects.Duct_End,(1+x+offx,offy-1,0),"west","down","000000")
+        blueprint.place_object(objects.Duct_End,(1+x+offx,offy-1,0),"east","left","000000")
+        blueprint.place_object(objects.Duct_End,(1+x+offx,offy-1,0),"west","left","000000")
+
+        blueprint.place_object(objects.Small_Pipe_Tee,(1+x+offx,offy+posy,0),"up","right","000000")
+        blueprint.place_object(objects.Duct_End,(1+x+offx,offy+posy,0),"west","up","000000")
+        blueprint.place_object(objects.Duct_End,(1+x+offx,offy+posy,0),"east","left","000000")
+        blueprint.place_object(objects.Duct_End,(1+x+offx,offy+posy,0),"west","left","000000")
+    offy-=1
+    blueprint.place_object(objects.Small_Pipe_Bend, (offx, offy, 0), "west", "left", "000000")
+    blueprint.place_object(objects.Duct_End, (offx, offy, 0), "west", "right", "000000")
+    blueprint.place_object(objects.Duct_End, (offx, offy, 0), "south", "left", "000000")
+    blueprint.place_object(objects.Duct_End, (offx, offy, 0), "west", "down", "000000")
+    blueprint.place_object(objects.Duct_End, (offx, offy, 0), "south", "up", "000000")
+    blueprint.place_object(objects.Small_Pipe_Bend, (offx, posy+offy+1, 0), "west", "right", "000000")
+    blueprint.place_object(objects.Duct_End, (offx, posy+offy+1, 0), "west", "right", "000000")
+    blueprint.place_object(objects.Duct_End, (offx, posy+offy+1, 0), "north", "left", "000000")
+    blueprint.place_object(objects.Duct_End, (offx, posy+offy+1, 0), "west", "up", "000000")
+    blueprint.place_object(objects.Duct_End, (offx, posy+offy+1, 0), "north", "right", "000000")
+    blueprint.place_object(objects.Small_Pipe_Bend, (posx+offx, offy, 0), "east", "left", "000000")
+    blueprint.place_object(objects.Duct_End, (posx+offx, offy, 0), "south", "left", "000000")
+    blueprint.place_object(objects.Duct_End, (posx+offx, offy, 0), "east", "left", "000000")
+    blueprint.place_object(objects.Duct_End, (posx+offx, offy, 0), "south", "down", "000000")
+    blueprint.place_object(objects.Duct_End, (posx+offx, offy, 0), "east", "up", "000000")
+    blueprint.place_object(objects.Small_Pipe_Bend, (posx+offx, posy+offy+1, 0), "east", "right", "000000")
+    blueprint.place_object(objects.Duct_End, (posx+offx, posy+offy+1, 0), "east", "down", "000000")
+    blueprint.place_object(objects.Duct_End, (posx+offx, posy+offy+1, 0), "north", "up", "000000")
+    blueprint.place_object(objects.Duct_End, (posx+offx, posy+offy+1, 0), "east", "left", "000000")
+    blueprint.place_object(objects.Duct_End, (posx+offx, posy+offy+1, 0), "north", "right", "000000")
+
+
 
 def face(direction,facing,rotated):
     if direction == "up":
@@ -581,17 +775,294 @@ class ID:
         return (next)
 
 
+def connect_logic(logic1,logic2):
+    for i in range(len(logic1)):
+        logic1[i].connect(logic2[i])
+
+
+class LogicGate:
+    def __init__(self,blueprint,id,mode,positon,facing,rotated,color=None,rotation="x,y,z"):
+        pos, facing, rotated = rotate(rotation, positon, facing, rotated)
+        pos, rot = location(pos, facing, rotated)
+
+        if mode == "and":
+            mode = 0
+        elif mode == "or":
+            mode = 1
+        elif mode == "xor":
+            mode = 2
+        elif mode == "nand":
+            mode = 3
+        elif mode == "nor":
+            mode = 4
+        elif mode == "xnor":
+            mode = 5
+        else:
+            mode = 0
+
+        if color == None:
+            color = "df7f01"
+
+        self.pos = pos
+        self.rot = rot
+        self.facing = facing
+        self.rotated = rotated
+        self.mode = mode
+        self.color = color
+        if type(id) == int:
+            self.ID = id
+        else:
+            self.ID = id.get_next()
+        self.connections = []
+        blueprint.gates.append(self)
+
+    def connect(self,device):
+        if type(device) == type([]):
+            for i in device:
+                if type(device) == int:
+                    self.connections.append({"id": i})
+                else:
+                    self.connections.append({"id": i.ID})
+        elif type(device) == int:
+            self.connections.append({"id": device})
+        elif device is not None:
+            self.connections.append({"id": device.ID})
+
+    def blueprint(self):
+        if self.connections == []:
+            connections = None
+        else:
+            connections = self.connections
+
+        return {
+            "color": self.color,
+            "controller": {
+                "active": False,
+                "controllers": connections,
+                "id": self.ID,
+                "mode": self.mode},
+            "pos": {
+                "x": self.pos[0],
+                "y": self.pos[1],
+                "z": self.pos[2]},
+            "shapeId": "9f0f56e8-2c31-4d83-996c-d00a9b296c3f",
+            "xaxis": self.rot[0],
+            "zaxis": self.rot[1]}
+
+class Timer:
+    def get_timer_pos(self,facing,pos):
+        if facing == "east":
+            return pos[0]+1,pos[1],pos[2]
+        if facing == "west":
+            return pos[0]-1,pos[1],pos[2]
+        if facing == "north":
+            return pos[0],pos[1]+1,pos[2]
+        if facing == "south":
+            return pos[0]+1,pos[1]-1,pos[2]
+        if facing == "up":
+            return pos[0],pos[1],pos[2]+1
+        if facing == "down":
+            return pos[0]+1,pos[1],pos[2]-1
+        print("error in get_timer_pos()")
+        exit(1)
+
+    def __init__(self,blueprint,id,seconds,ticks,positon,facing,rotated,color=None,rotation="x,y,z"):
+        if 0 <= seconds <= 59:
+            if 0 <= ticks <= 40:
+                pos,facing,rotated = rotate(rotation,positon,facing,rotated)
+                pos,rot = location(pos,facing,rotated)
+
+                if color == None:
+                    color = "df7f01"
+
+                self.pos = pos
+                self.timer_pos = self.get_timer_pos(facing,pos)
+                self.rot = rot
+                self.facing = facing
+                self.rotated = rotated
+                self.color = color
+                self.ID = id.get_next()
+                self.seconds = seconds
+                self.ticks = ticks
+                self.connections = []
+
+                print(self.pos,self.timer_pos)
+
+                blueprint.gates.append(self)
+
+                return
+        print("timer error")
+        print(ID,seconds,ticks,positon,facing,rotated,color,rotation)
+        exit(1)
+
+    def connect(self,device):
+        if type(device) == type([]):
+            for i in device:
+                self.connections.append({"id": i.ID})
+        else:
+            self.connections.append({"id": device.ID})
+
+
+    def blueprint(self):
+        if self.connections == []:
+            connections = None
+        else:
+            connections = self.connections
+
+        return {
+            "color": self.color,
+            "controller": {
+                "active": False,
+                "controllers": connections,
+                "id": self.ID,
+                "joints": None,
+                "seconds": self.seconds,
+                "ticks": self.ticks},
+
+            "pos": {
+                "x": self.pos[0],
+                "y": self.pos[1],
+                "z": self.pos[2]},
+            "shapeId": "8f7fd0e7-c46e-4944-a414-7ce2437bb30f",
+            "xaxis": self.rot[0],
+            "zaxis": self.rot[1]}
+
+class Switch:
+    def __init__(self,blueprint,id,positon,facing,rotated,color=None,rotation="x,y,z"):
+        pos,facing,rotated = rotate(rotation,positon,facing,rotated)
+        pos,rot = location(pos,facing,rotated)
+        if color == None:
+            color = "df7f01"
+
+        self.pos = pos
+        self.rot = rot
+        self.facing = facing
+        self.rotated = rotated
+        self.color = color
+        self.ID = id.get_next()
+        self.connections = []
+
+        blueprint.gates.append(self)
+
+    def connect(self,device):
+        if type(device) == type([]):
+            for i in device:
+                self.connections.append({"id": i.ID})
+        else:
+            self.connections.append({"id": device.ID})
+
+    def blueprint(self):
+        if self.connections == []:
+            connections = None
+        else:
+            connections = self.connections
+
+        return {
+            "color":self.color,
+            "controller":{
+                "active":False,
+                "controllers":connections,
+                "id":self.ID,
+                "joints":None},
+            "pos":{
+                "x":self.pos[0],
+                "y":self.pos[1],
+                "z":self.pos[2]},
+            "shapeId":"7cf717d7-d167-4f2d-a6e7-6b2c70aa3986",
+            "xaxis":self.rot[0],
+            "zaxis":self.rot[1]}
+
+
+class button:
+    def __init__(self,blueprint,id,positon,facing,rotated,color=None,rotation="x,y,z"):
+        pos,facing,rotated = rotate(rotation,positon,facing,rotated)
+        pos,rot = location(pos,facing,rotated)
+        if color == None:
+            color = "df7f01"
+
+        self.pos = pos
+        self.rot = rot
+        self.facing = facing
+        self.rotated = rotated
+        self.color = color
+        self.ID = id.get_next()
+        self.connections = []
+
+        blueprint.gates.append(self)
+
+    def connect(self, device):
+        if type(device) == type([]):
+            for i in device:
+                self.connections.append({"id": i.ID})
+        else:
+            self.connections.append({"id": device.ID})
+
+    def blueprint(self):
+        if self.connections == []:
+            connections = None
+        else:
+            connections = self.connections
+
+        return {
+            "color":self.color,
+            "controller":{
+                "controllers":connections,
+                "id":self.ID,
+                "joints":None},
+            "pos":{
+                "x":self.pos[0],
+                "y":self.pos[1],
+                "z":self.pos[2]},
+            "shapeId":"1e8d93a4-506b-470d-9ada-9c0a321e2db5",
+            "xaxis":self.rot[0],
+            "zaxis":self.rot[1]}
+
+
 
 class Blueprint:
-    def __init__(self,Logic_ID,path="",blueprint=""):
+    def __init__(self,Logic_ID):
+
+        if os.path.isfile(os.path.curdir + "config.txt"):
+            print("config file not found")
+            print("creating new config file")
+            with open("config.txt", "w") as config:
+                config.write("path/to/blueprint/folder\n")
+                config.write("blueprint-folder-name")
+            exit(1)
+
+        with open("config.txt", "r") as config:
+            self.path = config.readline()[:-1] + "/"
+            self.blueprint = config.readline()
+
+        if self.path == "path/to/blueprint/folder/":
+            print("Please check the config file. The example path is still in use!")
+            exit(1)
+
+        if self.path == "blueprint-folder-name":
+            print("Please check the config file. The example blueprint is still in use!")
+            exit(1)
+
+        if not os.path.isdir(self.path):
+            print("Sorry the path to the blueprint folder did not work")
+            print("Please check the config file")
+            exit(1)
+
+        if not os.path.isdir(self.path + self.blueprint):
+            print("Sorry the blueprint was not found in the blueprint folder")
+            print("Please check the config file")
+            exit(1)
+
         self.version = 4
         self.bodies = []
         self.childs = []
+        self.gates = []
         self.Logic_ID = Logic_ID
-        self.path = path.replace("\\","/")
-        self.blueprint = blueprint
+        self.dependencies = []
+
 
     def export_blueprint(self):
+        for blueprint in self.gates:
+            self.childs.append(blueprint.blueprint())
         blueprint = {}
         blueprint["bodies"] = self.bodies
         blueprint["bodies"].append({
@@ -602,119 +1073,17 @@ class Blueprint:
         print(self.path+self.blueprint)
         print("export complete")
 
+    def add_dependency(self, dependency):
+        for each in dependency:
+            print(each)
+
     def connect_ID(blueprint,IDs1,IDs2):
         for i in range(len(IDs1)):
-            blueprint.addId(IDs1[i],IDs2[i])
+            IDs1[i].connect(IDs2[i])
 
     def connect_IDS(blueprint,ID,IDs):
         for i in range(len(IDs)):
-            blueprint.addId(ID,IDs[i])
-
-
-    def timer(self,ID,seconds,ticks,positon,facing,rotated,color=None,rotation="x,y,z"):
-        if 0 <= seconds <= 59:
-            if 0 <= ticks <= 40:
-                pos,facing,rotated = rotate(rotation,positon,facing,rotated)
-                pos,rot = location(pos,facing,rotated)
-
-                self.childs.append({
-                    "color":color,
-                    "controller":{
-                        "active":False,
-                        "controllers":None,
-                        "id":ID,
-                        "joints":None,
-                        "seconds":seconds,
-                        "ticks":ticks},
-
-                    "pos":{
-                        "x":pos[0],
-                        "y":pos[1],
-                        "z":pos[2]},
-                    "shapeId":"8f7fd0e7-c46e-4944-a414-7ce2437bb30f",
-                    "xaxis":rot[0],
-                    "zaxis":rot[1]})
-                return
-        print("timer error")
-
-
-    def button(self,ID,positon,facing,rotated,color=None,rotation="x,y,z"):
-        pos,facing,rotated = rotate(rotation,positon,facing,rotated)
-        pos,rot = location(pos,facing,rotated)
-        if color == None:
-            color = "df7f01"
-        self.childs.append({
-            "color":color,
-            "controller":{
-                "controllers":None,
-                "id":ID,
-                "joints":None},
-            "pos":{
-                "x":pos[0],
-                "y":pos[1],
-                "z":pos[2]},
-            "shapeId":"1e8d93a4-506b-470d-9ada-9c0a321e2db5",
-            "xaxis":rot[0],
-            "zaxis":rot[1]})
-
-
-    def switch(self,ID,positon,facing,rotated,color=None,rotation="x,y,z"):
-        pos,facing,rotated = rotate(rotation,positon,facing,rotated)
-        pos,rot = location(pos,facing,rotated)
-        if color == None:
-            color = "df7f01"
-
-        self.childs.append({
-            "color":color,
-            "controller":{
-                "active":False,
-                "controllers":None,
-                "id":ID,
-                "joints":None},
-            "pos":{
-                "x":pos[0],
-                "y":pos[1],
-                "z":pos[2]},
-            "shapeId":"7cf717d7-d167-4f2d-a6e7-6b2c70aa3986",
-            "xaxis":rot[0],
-            "zaxis":rot[1]})
-
-
-    def logic_gate(self,ID,Mode,positon,facing,rotated,color=None,rotation="x,y,z"):
-        pos,facing,rotated = rotate(rotation,positon,facing,rotated)
-        pos,rot = location(pos,facing,rotated)
-
-        if Mode == "and":
-            mode = 0
-        elif Mode == "or":
-            mode = 1
-        elif Mode == "xor":
-            mode = 2
-        elif Mode == "nand":
-            mode = 3
-        elif Mode == "nor":
-            mode = 4
-        elif Mode == "xnor":
-            mode = 5
-        else:
-            mode = 0
-        if color == None:
-            color = "df7f01"
-
-        self.childs.append({
-            "color":color,
-            "controller":{
-                "active":False,
-                "controllers":None,
-                "id":ID,
-                "mode":mode},
-            "pos":{
-                "x":pos[0],
-                "y":pos[1],
-                "z":pos[2]},
-            "shapeId":"9f0f56e8-2c31-4d83-996c-d00a9b296c3f",
-            "xaxis":rot[0],
-            "zaxis":rot[1]})
+            ID.connect(IDs[i])
 
     def place_light_object(self,block,ID,positon,facing,rotated,color=None,lightColor=None,coneAngle=0,activity=False,rotation="x,y,z"):
         pos,facing,rotated = rotate(rotation,positon,facing,rotated)
@@ -748,17 +1117,7 @@ class Blueprint:
             "xaxis":rot[0],
             "zaxis":rot[1]})
 
-    def addId(self,ID1,ID2):
-        for index in range(len(self.childs)):
-            each = self.childs[index]
-            if "controller" in each.keys():
-                if "id" in each["controller"].keys():
-                    if each["controller"]["id"] == ID1:
-                        if each["controller"]["controllers"] == None:
-                            self.childs[index]["controller"]["controllers"] = []
-                        control = {}
-                        control["id"] = ID2
-                        self.childs[index]["controller"]["controllers"].append(control)
+
 
     def addIds(self,ID1,IDs):
         for index in range(len(self.childs)):
@@ -815,7 +1174,7 @@ class Blueprint:
             "color":color,
             "pos":{
                 "x":pos[0],
-                "y":pos[1],
+                "y":pos[1]-1,
                 "z":pos[2]},
             "shapeId":block["uuid"],
             "xaxis":1,
@@ -868,4 +1227,49 @@ class Blueprint:
         self.childs = blueprint["bodies"][0]["childs"]
         self.version = blueprint["version"]
 
-        print("load complete")
+
+
+class AsciiBlock:
+    def __init__(self, blueprint, id, char, positon, facing, rotated, color=None, rotation="x,y,z"):
+        pos, facing, rotated = rotate(rotation, positon, facing, rotated)
+        pos, rot = location(pos, facing, rotated)
+
+        if color == None:
+            color = "df7f01"
+
+        self.pos = pos
+        self.rot = rot
+        self.facing = facing
+        self.rotated = rotated
+        self.char = char
+        self.color = color
+        if type(id) == int:
+            self.ID = id
+        else:
+            self.ID = id.get_next()
+        self.connections = []
+        blueprint.gates.append(self)
+
+        blueprint.add_dependency({"contentId":"b7443f95-67b7-4f1e-82f4-9bef0c62c4b3","name":"The Modpack Continuation","shapeIds":["a459eb96-7f0a-42e6-a841-44f9c0561a55"],"steamFileId":2448492759})
+
+    def blueprint(self):
+        if self.connections == []:
+            connections = None
+        else:
+            connections = self.connections
+
+        return {
+            "color": self.color,
+            "controller": {
+                "containers": None,
+                "controllers": None,
+                "data": self.char,
+                "id": self.ID,
+                "joints": None},
+            "pos": {
+                "x": self.pos[0],
+                "y": self.pos[1],
+                "z": self.pos[2]},
+            "shapeId": "a459eb96-7f0a-42e6-a841-44f9c0561a55",
+            "xaxis": self.rot[0],
+            "zaxis": self.rot[1]}
