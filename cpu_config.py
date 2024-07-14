@@ -1,8 +1,9 @@
 import time
 import block_list
+import color_list
 import sm_helpers as sm
 import CPU_Components as cc
-import color_list
+
 import os
 import compiler
 start = time.perf_counter()
