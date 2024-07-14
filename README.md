@@ -1,4 +1,4 @@
-![img.png](img.png)
+![logo.png](logo.png)
 
 # ScrapMechanic logic tools
 
