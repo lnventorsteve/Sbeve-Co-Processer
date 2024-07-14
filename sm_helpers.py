@@ -972,8 +972,7 @@ class Switch:
             "xaxis":self.rot[0],
             "zaxis":self.rot[1]}
 
-
-class button:
+class Button:
     def __init__(self,blueprint,id,positon,facing,rotated,color=None,rotation="x,y,z"):
         pos,facing,rotated = rotate(rotation,positon,facing,rotated)
         pos,rot = location(pos,facing,rotated)
